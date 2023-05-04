@@ -64,8 +64,17 @@ while (!string.IsNullOrEmpty(link))
     {
         Console.WriteLine("如果使用task.txt作为输入，直接回车");
     }
-    Console.WriteLine($"输入选集 m3u8 链接，当前第 {index} 集（直接回车结束添加）：");
+    Console.WriteLine($"输入选集 m3u8 链接，当前第 {index} 集（直接回车结束添加，输入数字改变集数）：");
     link = Console.ReadLine()?.Trim() ?? "";
+    // check link is number type
+    if (int.TryParse(link, out var k))
+    {
+        if (k > 0)
+        {
+            index = k;
+            continue;
+        }
+    }
     // 检查link是否符合链接格式
     if (string.IsNullOrEmpty(link))
     {
