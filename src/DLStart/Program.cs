@@ -6,7 +6,7 @@ var targetName = "";
 var configFile = "config.json";
 
 // 检查config.json是否存在
-var config = new ConfigInfo { SavePath = "Downloads" };
+var config = new ConfigInfo { SavePath = "Downloads", AppPath = "core" };
 if (!File.Exists(configFile))
 {
     Console.WriteLine("config.json不存在，创建默认配置文件");
@@ -17,7 +17,7 @@ if (!File.Exists(configFile))
 
 config = JsonSerializer.Deserialize<ConfigInfo>(File.ReadAllText(configFile));
 
-var app = Path.Combine(config.AppPath ?? "", "N_m3u8DL-RE.exe");
+var app = Path.Combine(config.AppPath ?? "core", "N_m3u8DL-RE.exe");
 // 检查app 是否存在
 
 if (!File.Exists(app))
@@ -27,6 +27,8 @@ if (!File.Exists(app))
 }
 
 
+Console.WriteLine("");
+Console.WriteLine("");
 Console.WriteLine("1. 输入需要保存的路径(默认使用配置路径)");
 Console.WriteLine("2. 输入需要保存的名称，该名称将作为文件夹名称");
 Console.WriteLine("3. 按照提示输入m3u8链接地址（如果使用task.txt作为输入，直接回车）");
