@@ -6,7 +6,7 @@ var targetName = "";
 var configFile = "config.json";
 
 // 检查config.json是否存在
-var config = new ConfigInfo { SavePath = "Downloads", AppPath = "core" };
+var config = new ConfigInfo { SavePath = "Downloads", AppPath = "core", AfterTaskRunSync = false, AfterTaskRun = "" };
 if (!File.Exists(configFile))
 {
     Console.WriteLine("config.json不存在，创建默认配置文件");
@@ -17,7 +17,7 @@ if (!File.Exists(configFile))
 
 config = JsonSerializer.Deserialize<ConfigInfo>(File.ReadAllText(configFile));
 
-var app = Path.Combine(config.AppPath ?? "core", "N_m3u8DL-RE.exe");
+var app = Path.Combine(config?.AppPath ?? "core", "N_m3u8DL-RE.exe");
 // 检查app 是否存在
 
 if (!File.Exists(app))
@@ -35,12 +35,12 @@ Console.WriteLine("3. 按照提示输入m3u8链接地址（如果使用task.txt�
 
 Console.WriteLine("-----------------------------");
 Console.WriteLine("");
-Console.WriteLine($"输入需要保存的路径(默认使用配置路径 [{config.SavePath}]):");
+Console.WriteLine($"输入需要保存的路径(默认使用配置路径 [{config?.SavePath}]):");
 // 等待输入，将输入的字串作为保存路径，如果为空使用默认路径
 string savePath = Console.ReadLine();
 if (string.IsNullOrEmpty(savePath))
 {
-    savePath = config.SavePath;
+    savePath = config?.SavePath ?? "Downloads";
 }
 
 while (string.IsNullOrEmpty(targetName))
@@ -55,7 +55,7 @@ var path = Path.Combine(savePath, targetName);
 var index = 1;
 // when input is not empty string,set index add 1 and input string to filename,continue wait input
 var link = "123";
-var task = new DLTask(app);
+var task = new DLTask(app, config?.TempPath, config?.AfterTaskRun, config?.AfterTaskRunSync);
 var taskHistory = $"task_{DateTime.Now.ToString("yyyyMMddHHmmss")}_{DateTime.Now.Microsecond}.txt";
 var taskFile_Flag = true;
 while (!string.IsNullOrEmpty(link))
@@ -90,10 +90,11 @@ while (!string.IsNullOrEmpty(link))
                 var lines = File.ReadAllLines(taskFile);
                 foreach (var item in lines)
                 {
+                    targetFile = $"{targetName}_{index.ToString("00")}";
                     if (!string.IsNullOrWhiteSpace(item.Trim()))
                     {
-                        var arg = $"{item.Trim()} --save-name {targetFile} --save-dir {path}";
-                        task.Add(arg);
+                        //var arg = $"{item.Trim()} --save-name {targetFile} --save-dir {path}";
+                        task.Add(item.Trim(), targetFile, path);
                     }
                     index++;
                 }
@@ -105,13 +106,14 @@ while (!string.IsNullOrEmpty(link))
         }
         break;
     }
-    var para = $"{link} --save-name {targetFile} --save-dir {path}";
-    task.Add(para);
+    //var para = $"{link} --save-name {targetFile} --save-dir {path}";
+    task.Add(link, targetFile, path);
     File.AppendAllText(taskHistory, $"{link}\r\n");
     index++;
     taskFile_Flag = false;
 }
 task.Run();
+task.Wait();
 Console.WriteLine("任务执行完成");
 
 
