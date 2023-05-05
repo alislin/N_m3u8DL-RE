@@ -57,10 +57,12 @@ var index = 1;
 var link = "123";
 var task = new DLTask(app);
 var taskHistory = $"task_{DateTime.Now.ToString("yyyyMMddHHmmss")}_{DateTime.Now.Microsecond}.txt";
+var taskFile_Flag = true;
 while (!string.IsNullOrEmpty(link))
 {
+    var targetFile = $"{targetName}_{index.ToString("00")}";
     Console.WriteLine("");
-    if (index == 1)
+    if (taskFile_Flag)
     {
         Console.WriteLine("如果使用task.txt作为输入，直接回车");
     }
@@ -78,7 +80,7 @@ while (!string.IsNullOrEmpty(link))
     // 检查link是否符合链接格式
     if (string.IsNullOrEmpty(link))
     {
-        if (index == 1)
+        if (taskFile_Flag)
         {
             var taskFile = "task.txt";
             // 检查taskFile是否存在
@@ -90,7 +92,7 @@ while (!string.IsNullOrEmpty(link))
                 {
                     if (!string.IsNullOrWhiteSpace(item.Trim()))
                     {
-                        var arg = $"{item.Trim()} --save-name {targetName}_{index.ToString("00")} --save-dir {path}";
+                        var arg = $"{item.Trim()} --save-name {targetFile} --save-dir {path}";
                         task.Add(arg);
                     }
                     index++;
@@ -103,10 +105,11 @@ while (!string.IsNullOrEmpty(link))
         }
         break;
     }
-    var para = $"{link} --save-name {targetName}_{index.ToString("00")} --save-dir {path}";
+    var para = $"{link} --save-name {targetFile} --save-dir {path}";
     task.Add(para);
     File.AppendAllText(taskHistory, $"{link}\r\n");
     index++;
+    taskFile_Flag = false;
 }
 task.Run();
 Console.WriteLine("任务执行完成");
