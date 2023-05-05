@@ -19,7 +19,7 @@ namespace DLStart
 
         public bool Running { get; private set; }
 
-        public DLTask(string app, string? tempPath = null, string? taskAfter = null, bool syncFlag = false)
+        public DLTask(string app, string? tempPath = null, string? taskAfter = null, bool? syncFlag = false)
         {
             App = app;
             if (!string.IsNullOrWhiteSpace(tempPath))
@@ -28,7 +28,7 @@ namespace DLStart
 
             }
             TaskAfter = taskAfter;
-            SyncFlag = syncFlag;
+            SyncFlag = syncFlag ?? false;
         }
 
         public void Add(string link, string name, string path)
