@@ -50,6 +50,23 @@ while (string.IsNullOrEmpty(targetName))
     // 等待输入，将输入的字串作为targetName,如果没有则提示再次输入
     targetName = Console.ReadLine();
 }
+
+var session = "";
+while (string.IsNullOrEmpty(session))
+{
+    Console.WriteLine("");
+    Console.WriteLine("输入第几季（直接回车跳过）:");
+    // 等待输入，将输入的字串作为targetName,如果没有则提示再次输入
+    var s = Console.ReadLine();
+    if (int.TryParse(s, out var k))
+    {
+        if (k > 0)
+        {
+            session = $"s{k.ToString("00")}";
+        }
+    }
+}
+
 var path = Path.Combine(savePath, targetName);
 
 var index = 1;
@@ -60,7 +77,7 @@ var taskHistory = $"task_{DateTime.Now.ToString("yyyyMMddHHmmss")}_{DateTime.Now
 var taskFile_Flag = true;
 while (!string.IsNullOrEmpty(link))
 {
-    var targetFile = $"{targetName}_{index.ToString("00")}";
+    var targetFile = $"{targetName}.{session}e{index.ToString("00")}";
     Console.WriteLine("");
     if (taskFile_Flag)
     {
@@ -90,7 +107,7 @@ while (!string.IsNullOrEmpty(link))
                 var lines = File.ReadAllLines(taskFile);
                 foreach (var item in lines)
                 {
-                    targetFile = $"{targetName}_{index.ToString("00")}";
+                    targetFile = $"{targetName}.{session}e{index.ToString("00")}";
                     if (!string.IsNullOrWhiteSpace(item.Trim()))
                     {
                         //var arg = $"{item.Trim()} --save-name {targetFile} --save-dir {path}";
