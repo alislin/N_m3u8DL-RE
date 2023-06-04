@@ -56,10 +56,13 @@ targetName = ConsoleHelper.Read(new string[] { "输入需要保存的名称，�
             // 获取task文件列表
             var di = new DirectoryInfo(".");
             var taskFile_list = new List<FileInfo>(di.GetFiles("task_*.task"));
-            var taskFile_tips = new List<string>();
-            taskFile_tips.Add("选择任务文件（直接回车返回名称输入）：");
-            taskFile_tips.AddRange(taskFile_list.Select(f => $"{taskFile_list.IndexOf(f) + 1}) {f.Name}"));
-            var m = ConsoleHelper.Read(taskFile_tips.ToArray(), 1);
+            if (taskFile_list.Count == 0)
+            {
+                return false;
+            }
+            ConsoleHelper.Print(new string[] { "选择任务文件（直接回车返回名称输入）：" }, 1);
+            var tips = taskFile_list.Select(f => $"{taskFile_list.IndexOf(f) + 1}) {f.Name}").ToArray();
+            var m = ConsoleHelper.Read(tips, 0, null, ConsoleColor.Green);
             if (string.IsNullOrWhiteSpace(m))
             {
                 return false;
@@ -124,7 +127,7 @@ if (taskFile_select_Flag && !string.IsNullOrWhiteSpace(taskFile_name))
 }
 
 
-session = ConsoleHelper.Read(new string[] { "输入第几季（直接回车跳过）:" }, 1) ?? "1";
+session = ConsoleHelper.Read(new string[] { "输入第几季（直接回车跳过）:" }, 1, null, ConsoleColor.Yellow) ?? "1";
 session = ConsoleHelper.GetInt(session, 1).ToString("00");
 
 path = Path.Combine(savePath, targetName);
@@ -143,7 +146,7 @@ while (!string.IsNullOrEmpty(link))
     link = ConsoleHelper.Read(new string[] {
         taskFile_Flag?"如果使用task.txt作为输入，直接回车":"",
         $"输入选集 m3u8 链接，当前第 {index} 集（直接回车结束添加，输入数字改变集数）：",
-    }, 1)?.Trim() ?? "";
+    }, 1, null, ConsoleColor.Yellow)?.Trim() ?? "";
 
     // check link is number type
     if (int.TryParse(link, out var k))
