@@ -106,11 +106,15 @@ if (taskFile_select_Flag && !string.IsNullOrWhiteSpace(taskFile_name))
     var task_index = 1;
     foreach (var item in lines)
     {
-        var link_match = Regex.Match(item, @"(\d+),(.*)");
+        var link_match = Regex.Match(item, @"(\d+),(\.+?),(.*)");
         task_index = ConsoleHelper.GetInt(link_match.Groups[1].Value);
-        var item_link = link_match.Groups[2].Value.Trim();
+        var item_link = link_match.Groups[3].Value.Trim();
         var targetFile = $"{targetName}.{session}e{task_index.ToString("00")}";
         targetFile = $"{targetName}.{session}e{task_index.ToString("00")}";
+        if (!string.IsNullOrWhiteSpace(link_match.Groups[2].Value))
+        {
+            targetFile = link_match.Groups[3].Value.Trim();
+        }
         if (!string.IsNullOrWhiteSpace(item_link))
         {
             //var arg = $"{item.Trim()} --save-name {targetFile} --save-dir {path}";
